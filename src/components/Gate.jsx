@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Embers from './Embers.jsx'
+import { useMagnetic } from './useMagnetic.js'
 
 const ANSWER = '19092023'
 const WHATSAPP_NUMBER = '918838415403'
@@ -11,6 +12,7 @@ export default function Gate({ onUnlock }) {
   const [value, setValue] = useState('')
   const [shake, setShake] = useState(false)
   const [tries, setTries] = useState(0)
+  const unlockRef = useMagnetic(0.25)
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -93,7 +95,7 @@ export default function Gate({ onUnlock }) {
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
               />
-              <button className="cta small" type="submit">
+              <button ref={unlockRef} className="cta small" type="submit">
                 Unlock <span className="chevron">›</span>
               </button>
             </form>

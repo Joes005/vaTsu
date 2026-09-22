@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
+import AnniversaryReveal from '../components/AnniversaryReveal.jsx'
 
 function pad(n) {
   return String(n).padStart(2, '0')
 }
 
-const TARGET = '2026-09-23T00:00:00'
+// TESTING: temporarily set to the past so the reveal unlocks immediately.
+// Real target — restore this after testing: '2026-09-23T18:30:00'
+const TARGET = '2020-01-01T00:00:00'
 
-export default function FutureLetter({ nickname = 'Vatsu' }) {
+export default function FutureLetter() {
   const [state, setState] = useState(null)
 
   useEffect(() => {
@@ -35,13 +38,13 @@ export default function FutureLetter({ nickname = 'Vatsu' }) {
   if (!state.done) {
     return (
       <div className="slide-inner">
-        <p className="eyebrow enter">Locked until 23 · 09 · 2026</p>
+        <p className="eyebrow enter">Locked until 23 · 09 · 2026 · 6:30 PM</p>
         <h2 className="enter" style={{ animationDelay: '.08s' }}>
           One last page. It opens itself, in time.
         </h2>
         <p className="lede enter" style={{ animationDelay: '.18s' }}>
-          Three years to the day since we made it official — 23.09.2023. There's a letter waiting
-          here for that morning. Until then, it stays sealed.
+          Three years to the day since we made it official — 23.09.2023. There's something
+          waiting here for that evening. Until then, it stays sealed.
         </p>
         <div className="countdown enter" style={{ animationDelay: '.3s' }}>
           <div className="cd-tile"><div className="cd-num">{pad(state.d)}</div><div className="cd-label">Days</div></div>
@@ -58,15 +61,8 @@ export default function FutureLetter({ nickname = 'Vatsu' }) {
 
   return (
     <div className="slide-inner">
-      <p className="eyebrow enter">23 · 09 · 2026 — three years, official</p>
-      <h2 className="enter" style={{ animationDelay: '.08s' }}>It's here. So this one's for you, {nickname}.</h2>
-      <div className="enter" style={{ animationDelay: '.2s', marginTop: 20 }}>
-        <p className="body-text">
-          [Placeholder letter — write this closer to the date. What these three years actually
-          meant, what changed, what didn't, and why it was always going to be you.]
-        </p>
-      </div>
-      <p className="sign enter" style={{ animationDelay: '.3s' }}>— still yours, three years in 🧡</p>
+      <p className="eyebrow enter">23 · 09 · 2026 · 6:30 PM — three years, official</p>
+      <AnniversaryReveal />
     </div>
   )
 }

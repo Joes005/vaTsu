@@ -2,7 +2,7 @@ export default function Naam() {
   return (
     <div className="slide-inner">
       <p className="eyebrow enter">A little poem, before anything else</p>
-      <h1 className="enter" style={{ animationDelay: '.08s' }}>Nee. Naan. Naam.</h1>
+      <h1 className="enter heading-glow" style={{ animationDelay: '.08s' }}>Nee. Naan. Naam.</h1>
       <p className="lede enter" style={{ animationDelay: '.18s' }}>You. Me. Us.</p>
       <div className="enter" style={{ animationDelay: '.3s', marginTop: 22 }}>
         <p className="poem-line" style={{ margin: '0 0 20px' }}>

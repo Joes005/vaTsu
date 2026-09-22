@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Embers from './components/Embers.jsx'
-import Dots from './components/Dots.jsx'
+import CursorGlow from './components/CursorGlow.jsx'
+import SideDecor from './components/SideDecor.jsx'
 import Nav from './components/Nav.jsx'
 import Intro from './components/Intro.jsx'
 import Gate from './components/Gate.jsx'
@@ -86,7 +87,8 @@ export default function App() {
   return (
     <>
       <Embers />
-      <Dots slides={SLIDES} index={index} onSelect={goTo} />
+      <CursorGlow />
+      <SideDecor />
       <div className="deck" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {outgoing && OutgoingComponent && (
           <div className={'slide slide-out-' + (outgoing.dir === 1 ? 'up' : 'down')} key={'exit-' + outgoingSlide.id}>
