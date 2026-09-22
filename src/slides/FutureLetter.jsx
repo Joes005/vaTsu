@@ -5,12 +5,15 @@ function pad(n) {
   return String(n).padStart(2, '0')
 }
 
-// TESTING: temporarily set to the past so the reveal unlocks immediately.
-// Real target — restore this after testing: '2026-09-23T18:30:00'
-const TARGET = '2020-01-01T00:00:00'
+const TARGET = '2026-09-23T18:30:00'
 
-export default function FutureLetter() {
+export default function FutureLetter({ onLockNext }) {
   const [state, setState] = useState(null)
+
+  useEffect(() => {
+    onLockNext?.(true)
+    return () => onLockNext?.(false)
+  }, [])
 
   useEffect(() => {
     const t = new Date(TARGET)
@@ -32,6 +35,10 @@ export default function FutureLetter() {
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
   }, [])
+
+  useEffect(() => {
+    if (state?.done) onLockNext?.(false)
+  }, [state, onLockNext])
 
   if (!state) return null
 

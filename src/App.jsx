@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Embers from './components/Embers.jsx'
 import CursorGlow from './components/CursorGlow.jsx'
-import SideDecor from './components/SideDecor.jsx'
+import HeartTapBurst from './components/HeartTapBurst.jsx'
+import AudioPlayer from './components/AudioPlayer.jsx'
 import Nav from './components/Nav.jsx'
 import Intro from './components/Intro.jsx'
 import Gate from './components/Gate.jsx'
@@ -22,6 +23,7 @@ export default function App() {
   const [outgoing, setOutgoing] = useState(null) // { index, dir }
   const [nickname, setNickname] = useState('Vatsu')
   const [mood, setMood] = useState(null)
+  const [nextLocked, setNextLocked] = useState(false)
   const reducedMotion = useRef(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const touchX = useRef(null)
 
@@ -29,6 +31,8 @@ export default function App() {
     (next) => {
       const clamped = Math.max(0, Math.min(SLIDES.length - 1, next))
       if (clamped === index || outgoing) return
+      if (clamped > index && nextLocked) return
+      setNextLocked(false)
       if (reducedMotion.current) {
         setIndex(clamped)
         return
@@ -38,7 +42,7 @@ export default function App() {
       setIndex(clamped)
       setTimeout(() => setOutgoing(null), TRANSITION_MS)
     },
-    [index, outgoing]
+    [index, outgoing, nextLocked]
   )
 
   useEffect(() => {
@@ -88,7 +92,21 @@ export default function App() {
     <>
       <Embers />
       <CursorGlow />
-      <SideDecor />
+      <HeartTapBurst />
+
+      {/* Top Header Bar */}
+      <header className="app-header" aria-hidden="true">
+        <div className="header-left">
+          <span className="header-badge">vaTsu 🧡</span>
+          <span className="header-progress">
+            {String(index + 1).padStart(2, '0')} / {String(SLIDES.length).padStart(2, '0')}
+          </span>
+        </div>
+        <div className="header-right">
+          <AudioPlayer />
+        </div>
+      </header>
+
       <div className="deck" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         {outgoing && OutgoingComponent && (
           <div className={'slide slide-out-' + (outgoing.dir === 1 ? 'up' : 'down')} key={'exit-' + outgoingSlide.id}>
@@ -113,10 +131,18 @@ export default function App() {
             onSetNickname={setNickname}
             mood={mood}
             onSetMood={setMood}
+            onLockNext={setNextLocked}
           />
         </div>
       </div>
-      <Nav index={index} isLast={isLast} hideNext={slide.hideNav} onNext={() => goTo(index + 1)} onBack={() => goTo(index - 1)} />
+      <Nav
+        index={index}
+        isLast={isLast}
+        hideNext={slide.hideNav}
+        nextLocked={nextLocked}
+        onNext={() => goTo(index + 1)}
+        onBack={() => goTo(index - 1)}
+      />
     </>
   )
 }

@@ -27,7 +27,7 @@ export default function PrayForMe() {
         aana ennoda prayer onnu mattum innum aagala.
       </p>
 
-      <blockquote className="prayer-quote enter" style={{ animationDelay: '.5s, 0s' }}>
+      <blockquote className="prayer-quote enter" style={{ animationDelay: '.5s' }}>
         "Saami, eapudiyachum, ennoda saamiya, ennoda seathu vachurunga."
         <span className="prayer-quote-note">
           — antha oru prayer, eanakku nadakumnu innum theriyala.
@@ -41,7 +41,7 @@ export default function PrayForMe() {
         nee eanaku venum. so, nee pray panra athu kandippa nadanum.
       </p>
 
-      <blockquote className="prayer-quote enter" style={{ animationDelay: '.76s, 0s' }}>
+      <blockquote className="prayer-quote enter" style={{ animationDelay: '.76s' }}>
         "ennoda saami ya, ennoda seathu veika solli kelu ma"
         <span className="prayer-quote-note">
           eaa saami, unna ennodavey seathu vachura, solli kelu saami.

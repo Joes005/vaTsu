@@ -4,7 +4,7 @@ export default function Cover() {
   return (
     <div className="slide-inner">
       <p className="eyebrow enter" style={{ animationDelay: "0s" }}>
-        This is for you, *Thirumba varanum na vanthuru saami Naathana*
+        This is for you — <em>Thirumba varanum na vanthuru saami Naathana</em>
       </p>
       <h1 className="enter heading-glow" style={{ animationDelay: ".08s" }}>
         Vatsu.

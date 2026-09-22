@@ -1,18 +1,50 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const STEPS = [
-  { type: 'text', text: 'You mean everything to me', hold: 1700 },
-  { type: 'logo', hold: 2100 },
-  { type: 'text', text: 'I am in love with you', hold: 1700 },
-  { type: 'text', text: 'as always', hold: 1500, accent: true },
+  { type: 'text', text: 'You mean everything to me', hold: 3800 },
+  { type: 'logo', hold: 4200 },
+  { type: 'text', text: 'I am in love with you', hold: 3600 },
+  { type: 'text', text: 'as always', hold: 3400, accent: true },
 ]
-const FADE = 450
+const FADE = 700
 
 export default function Intro({ onDone }) {
   const [stepIndex, setStepIndex] = useState(0)
   const [hiding, setHiding] = useState(false)
   const [phase, setPhase] = useState('in')
   const [visible, setVisible] = useState(true)
+  const timerRef = useRef([])
+
+  const clearAllTimers = () => {
+    timerRef.current.forEach(clearTimeout)
+    timerRef.current = []
+  }
+
+  const runStep = (index) => {
+    clearAllTimers()
+    setHiding(false)
+    setStepIndex(index)
+
+    const currentStep = STEPS[index]
+    const tHold = setTimeout(() => {
+      setHiding(true)
+    }, currentStep.hold)
+
+    const tNext = setTimeout(() => {
+      if (index < STEPS.length - 1) {
+        runStep(index + 1)
+      } else {
+        setPhase('exit')
+        const tExit = setTimeout(() => {
+          setVisible(false)
+          onDone?.()
+        }, 600)
+        timerRef.current.push(tExit)
+      }
+    }, currentStep.hold + FADE)
+
+    timerRef.current.push(tHold, tNext)
+  }
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -21,36 +53,30 @@ export default function Intro({ onDone }) {
       onDone?.()
       return
     }
-    const timers = []
-    let t = 0
-    STEPS.forEach((step, i) => {
-      t += step.hold
-      timers.push(setTimeout(() => setHiding(true), t))
-      t += FADE
-      if (i < STEPS.length - 1) {
-        const next = i + 1
-        timers.push(
-          setTimeout(() => {
-            setStepIndex(next)
-            setHiding(false)
-          }, t)
-        )
-      } else {
-        timers.push(setTimeout(() => setPhase('exit'), t))
-        timers.push(
-          setTimeout(() => {
-            setVisible(false)
-            onDone?.()
-          }, t + 500)
-        )
-      }
-    })
-    return () => timers.forEach(clearTimeout)
+
+    runStep(0)
+    return () => clearAllTimers()
   }, [])
 
   if (!visible) return null
 
-  const skip = () => {
+  const handleNextOrSkip = (e) => {
+    e?.stopPropagation?.()
+    if (stepIndex < STEPS.length - 1) {
+      runStep(stepIndex + 1)
+    } else {
+      setPhase('exit')
+      clearAllTimers()
+      setTimeout(() => {
+        setVisible(false)
+        onDone?.()
+      }, 500)
+    }
+  }
+
+  const skip = (e) => {
+    e?.stopPropagation?.()
+    clearAllTimers()
     setPhase('exit')
     setTimeout(() => {
       setVisible(false)
@@ -61,7 +87,11 @@ export default function Intro({ onDone }) {
   const step = STEPS[stepIndex]
 
   return (
-    <div className={'intro' + (phase === 'exit' ? ' intro-exit' : '')} role="presentation">
+    <div
+      className={'intro' + (phase === 'exit' ? ' intro-exit' : '')}
+      onClick={handleNextOrSkip}
+      role="presentation"
+    >
       <svg className="intro-heart" viewBox="0 0 100 100" aria-hidden="true">
         <defs>
           <radialGradient id="introHeartGrad" cx="50%" cy="38%" r="62%">
@@ -83,26 +113,60 @@ export default function Intro({ onDone }) {
       <div className="intro-flare" aria-hidden="true" />
 
       {step.type === 'text' && (
-        <div className={'intro-line' + (step.accent ? ' intro-line-accent' : '') + (hiding ? ' intro-line-hide' : '')}>
+        <div
+          className={
+            'intro-line' +
+            (step.accent ? ' intro-line-accent' : '') +
+            (hiding ? ' intro-line-hide' : '')
+          }
+          key={step.text}
+        >
           {step.text}
         </div>
       )}
 
       {step.type === 'logo' && (
-        <div className={'intro-logo' + (hiding ? ' intro-line-hide' : '')}>
+        <div className={'intro-logo' + (hiding ? ' intro-line-hide' : '')} key="logo">
           <div className="intro-wordmark-wrap">
-            <span className="wm-topline" aria-hidden="true" />
+            <div className="wm-eyebrow-pill">
+              <span className="wm-sparkle">✨</span>
+              <span>19 · 09 · 2023</span>
+              <span className="wm-sparkle">✨</span>
+            </div>
+
             <div className="intro-wordmark">
               <span className="wm-letter wm-v">v</span>
               <span className="wm-letter wm-a">a</span>
-              <span className="wm-t">T</span>
+              <span className="wm-t-wrap">
+                <span className="wm-t-sparkle" aria-hidden="true">✦</span>
+                <span className="wm-t">T</span>
+              </span>
               <span className="wm-letter wm-s">s</span>
               <span className="wm-letter wm-u">u</span>
               <span className="intro-heart-emoji">🧡</span>
             </div>
+
+            <div className="wm-bottom-row">
+              <span className="wm-rule-line" />
+              <span className="wm-tagline">Nee · Naan · Namakaga</span>
+              <span className="wm-rule-line" />
+            </div>
           </div>
         </div>
       )}
+
+      <div className="intro-progress-bar" aria-hidden="true">
+        {STEPS.map((_, i) => (
+          <span
+            key={i}
+            className={'intro-progress-dot' + (i === stepIndex ? ' active' : i < stepIndex ? ' done' : '')}
+          />
+        ))}
+      </div>
+
+      <div className="intro-tap-hint" aria-hidden="true">
+        tap anywhere to continue
+      </div>
 
       <button className="intro-skip" onClick={skip} type="button" aria-label="Skip intro">
         Skip <span className="intro-skip-chevron">›</span>

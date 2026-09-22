@@ -1,6 +1,6 @@
 import { useMagnetic } from './useMagnetic.js'
 
-export default function Nav({ index, isLast, hideNext, onNext, onBack }) {
+export default function Nav({ index, isLast, hideNext, nextLocked, onNext, onBack }) {
   const backRef = useMagnetic(0.3)
   const nextRef = useMagnetic(0.3)
 
@@ -15,7 +15,13 @@ export default function Nav({ index, isLast, hideNext, onNext, onBack }) {
       )}
       {!isLast && !hideNext && (
         <div className="nav">
-          <button ref={nextRef} className="primary" onClick={onNext} aria-label="Next page">
+          <button
+            ref={nextRef}
+            className="primary"
+            onClick={onNext}
+            disabled={nextLocked}
+            aria-label={nextLocked ? 'Locked until it unlocks' : 'Next page'}
+          >
             <span className="label">Next</span> <span className="chevron">→</span>
           </button>
         </div>

@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Embers from './Embers.jsx'
 import { useMagnetic } from './useMagnetic.js'
 
 const ANSWER = '19092023'
 const WHATSAPP_NUMBER = '918838415403'
-const WHATSAPP_MESSAGE = 'Can you remind me the day? 🧡'
+const WHATSAPP_MESSAGE = 'Ammulu, the date I asked you is 19.09.2023 🧡'
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`
 
 export default function Gate({ onUnlock }) {
@@ -13,6 +13,7 @@ export default function Gate({ onUnlock }) {
   const [shake, setShake] = useState(false)
   const [tries, setTries] = useState(0)
   const unlockRef = useMagnetic(0.25)
+  const timerRef = useRef([])
 
   useEffect(() => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -20,13 +21,19 @@ export default function Gate({ onUnlock }) {
       setStage('pinned')
       return
     }
-    const t1 = setTimeout(() => setStage('appear'), 1500)
-    const t2 = setTimeout(() => setStage('pinned'), 1500 + 1500)
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-    }
+    const t1 = setTimeout(() => setStage('appear'), 1600)
+    const t2 = setTimeout(() => setStage('pinned'), 3200)
+    timerRef.current.push(t1, t2)
+
+    return () => timerRef.current.forEach(clearTimeout)
   }, [])
+
+  const skipToPin = () => {
+    if (stage === 'foryou' || stage === 'appear') {
+      timerRef.current.forEach(clearTimeout)
+      setStage('pinned')
+    }
+  }
 
   const openLetter = () => {
     if (stage !== 'pinned') return
@@ -43,14 +50,18 @@ export default function Gate({ onUnlock }) {
     setTries((t) => t + 1)
     setShake(true)
     setTimeout(() => setShake(false), 500)
-    window.open(WHATSAPP_URL, '_blank', 'noopener,noreferrer')
   }
 
   return (
-    <div className="gate">
+    <div className="gate" onClick={skipToPin}>
       <Embers />
 
-      {stage === 'foryou' && <p className="letter-foryou">It's for you.</p>}
+      {stage === 'foryou' && (
+        <div className="letter-foryou-wrap">
+          <p className="letter-foryou">It's for you, Ammulu.</p>
+          <span className="gate-sub-hint">tap anywhere</span>
+        </div>
+      )}
 
       <div
         className={
@@ -59,7 +70,10 @@ export default function Gate({ onUnlock }) {
           (stage === 'pinned' ? ' pinned' : '') +
           (stage === 'open' ? ' opened' : '')
         }
-        onClick={openLetter}
+        onClick={(e) => {
+          e.stopPropagation()
+          openLetter()
+        }}
         role={stage === 'pinned' ? 'button' : undefined}
         aria-label={stage === 'pinned' ? 'Open the letter' : undefined}
         tabIndex={stage === 'pinned' ? 0 : undefined}
@@ -71,14 +85,27 @@ export default function Gate({ onUnlock }) {
       </div>
 
       {stage === 'pinned' && (
-        <p className="letter-pin-hint">tap it — you'll need the password to read this letter ↗</p>
+        <div
+          className="letter-pin-hint"
+          onClick={(e) => {
+            e.stopPropagation()
+            openLetter()
+          }}
+        >
+          <span className="pin-pulse">💌</span>
+          <p>Tap the scroll to unlock the letter</p>
+        </div>
       )}
 
       {stage === 'open' && (
-        <div className={'gate-shell letter-form-in' + (shake ? ' gate-shake' : '')}>
+        <div className={'gate-shell letter-form-in' + (shake ? ' gate-shake' : '')} onClick={(e) => e.stopPropagation()}>
           <div className="gate-card enter">
-            <p className="eyebrow" style={{ animationDelay: '0s' }}>Before you go in</p>
-            <h1 className="enter" style={{ animationDelay: '.08s' }}>You can read this if you know this day.</h1>
+            <p className="eyebrow" style={{ animationDelay: '0s' }}>
+              Before you step inside
+            </p>
+            <h1 className="enter" style={{ animationDelay: '.08s' }}>
+              You can read this if you remember this day.
+            </h1>
             <p className="gate-clue enter" style={{ animationDelay: '.18s' }}>
               <span className="gate-clue-label">Clue</span> 🧡 &gt;&gt;&gt; 💙
             </p>
@@ -91,7 +118,7 @@ export default function Gate({ onUnlock }) {
                 inputMode="numeric"
                 autoComplete="off"
                 autoFocus
-                placeholder="DD / MM / YYYY"
+                placeholder="DD / MM / YYYY (eg. 19092023)"
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
               />
@@ -101,9 +128,9 @@ export default function Gate({ onUnlock }) {
             </form>
             {tries > 0 && (
               <p className="gate-hint">
-                Not quite. I just messaged you on WhatsApp — go check.{' '}
+                Chinna mistake! Namma special date niyabagam illaya?{' '}
                 <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-                  Didn't open? Tap here →
+                  Ask Joe on WhatsApp for the date →
                 </a>
               </p>
             )}
