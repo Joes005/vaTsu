@@ -69,6 +69,7 @@ export default function MemoryStories() {
   const [loveCount, setLoveCount] = useState({ 0: 12, 1: 8, 2: 15, 3: 10, 4: 9, 5: 14 })
   const [heartPop, setHeartPop] = useState(false)
   const touchStartX = useRef(null)
+  const touchStartY = useRef(null)
 
   const current = STORIES[currentIdx]
 
@@ -95,15 +96,23 @@ export default function MemoryStories() {
   }
 
   const handleTouchStart = (e) => {
+    e.stopPropagation()
     touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
   }
 
   const handleTouchEnd = (e) => {
-    if (touchStartX.current === null) return
+    e.stopPropagation()
+    if (touchStartX.current === null || touchStartY.current === null) return
     const dx = e.changedTouches[0].clientX - touchStartX.current
-    if (dx < -40) next()
-    if (dx > 40) prev()
+    const dy = e.changedTouches[0].clientY - touchStartY.current
+    // Only flip if horizontal swipe is decisive and greater than vertical scroll drift
+    if (Math.abs(dx) > 42 && Math.abs(dx) > Math.abs(dy) * 1.35) {
+      if (dx < 0) next()
+      else prev()
+    }
     touchStartX.current = null
+    touchStartY.current = null
   }
 
   return (

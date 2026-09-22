@@ -26,6 +26,7 @@ export default function App() {
   const [nextLocked, setNextLocked] = useState(false)
   const reducedMotion = useRef(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const touchX = useRef(null)
+  const touchY = useRef(null)
 
   const goTo = useCallback(
     (next) => {
@@ -56,13 +57,27 @@ export default function App() {
   }, [index, goTo, introDone, unlocked])
 
   const onTouchStart = (e) => {
+    const target = e.target
+    // Don't intercept swipe when interacting with buttons, inputs, tabs, or the polaroid stage
+    if (target.closest('button, input, textarea, a, .album-stage, .album-tabs-row, .sky-canvas-wrap, .swipe-stack')) {
+      touchX.current = null
+      touchY.current = null
+      return
+    }
     touchX.current = e.touches[0].clientX
+    touchY.current = e.touches[0].clientY
   }
+
   const onTouchEnd = (e) => {
-    if (touchX.current === null) return
+    if (touchX.current === null || touchY.current === null) return
     const dx = e.changedTouches[0].clientX - touchX.current
-    if (Math.abs(dx) > 50) goTo(dx < 0 ? index + 1 : index - 1)
+    const dy = e.changedTouches[0].clientY - touchY.current
+    // Only navigate if horizontal swipe is decisive and significantly greater than vertical drift
+    if (Math.abs(dx) > 52 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      goTo(dx < 0 ? index + 1 : index - 1)
+    }
     touchX.current = null
+    touchY.current = null
   }
 
   const slide = SLIDES[index]

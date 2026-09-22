@@ -115,38 +115,43 @@ export default function Sky() {
 
           {/* Milestones along the curve */}
           {/* 2023 */}
-          <g className="sky-node" onClick={() => setActiveIdx(0)}>
+          <g className="sky-node" onClick={() => setActiveIdx(0)} role="button" tabIndex={0} aria-label="Year 2023: The First Yes">
+            <circle cx="60" cy="165" r="24" fill="transparent" />
             <circle cx="60" cy="165" r="7" fill="var(--accent-deep)" />
             <circle cx="60" cy="165" r="3" fill="#fff" />
-            <text x="60" y="192" textAnchor="middle" className="sky-year-label">2023</text>
+            <text x="60" y="194" textAnchor="middle" className="sky-year-label">2023</text>
           </g>
 
           {/* 2024 */}
-          <g className="sky-node" onClick={() => setActiveIdx(1)}>
+          <g className="sky-node" onClick={() => setActiveIdx(1)} role="button" tabIndex={0} aria-label="Year 2024: Growing Together">
+            <circle cx="178" cy="98" r="24" fill="transparent" />
             <circle cx="178" cy="98" r="6" fill="var(--accent-deep)" />
             <circle cx="178" cy="98" r="2.5" fill="#fff" />
-            <text x="178" y="124" textAnchor="middle" className="sky-year-label">2024</text>
+            <text x="178" y="126" textAnchor="middle" className="sky-year-label">2024</text>
           </g>
 
           {/* 2025 */}
-          <g className="sky-node" onClick={() => setActiveIdx(2)}>
+          <g className="sky-node" onClick={() => setActiveIdx(2)} role="button" tabIndex={0} aria-label="Year 2025: Through Every Prayer">
+            <circle cx="300" cy="62" r="24" fill="transparent" />
             <circle cx="300" cy="62" r="6.5" fill="var(--accent)" />
             <circle cx="300" cy="62" r="3" fill="#fff" />
             <text x="300" y="44" textAnchor="middle" className="sky-year-label">2025</text>
           </g>
 
           {/* 2026 */}
-          <g className="sky-node" onClick={() => setActiveIdx(3)}>
+          <g className="sky-node" onClick={() => setActiveIdx(3)} role="button" tabIndex={0} aria-label="Year 2026: Three Years Official">
+            <circle cx="422" cy="98" r="24" fill="transparent" />
             <circle cx="422" cy="98" r="6" fill="var(--accent-deep)" />
             <circle cx="422" cy="98" r="2.5" fill="#fff" />
-            <text x="422" y="124" textAnchor="middle" className="sky-year-label">2026</text>
+            <text x="422" y="126" textAnchor="middle" className="sky-year-label">2026</text>
           </g>
 
           {/* Forever / Namakaga */}
-          <g className="sky-node" onClick={() => setActiveIdx(4)}>
+          <g className="sky-node" onClick={() => setActiveIdx(4)} role="button" tabIndex={0} aria-label="Forever: Namakaga">
+            <circle cx="540" cy="165" r="26" fill="transparent" />
             <circle cx="540" cy="165" r="8" fill="var(--accent)" />
             <circle cx="540" cy="165" r="4" fill="#fff" />
-            <text x="540" y="192" textAnchor="middle" className="sky-year-label sky-forever-label">Namakaga 🧡</text>
+            <text x="540" y="194" textAnchor="middle" className="sky-year-label sky-forever-label">Namakaga 🧡</text>
           </g>
         </svg>
 

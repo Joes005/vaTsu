@@ -17,14 +17,20 @@ const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent
 export default function FinalQuestion({ onRestart }) {
   const [answered, setAnswered] = useState(false)
   const [dodgeCount, setDodgeCount] = useState(0)
-  const [dodgeX, setDodgeX] = useState(0)
+  const [dodgePos, setDodgePos] = useState({ x: 0, y: 0 })
 
   const dodge = () => {
     const w = window.innerWidth
-    const roomEachSide = Math.max(0, w / 2 - BTN_W / 2 - 16)
-    const maxReach = Math.min(roomEachSide, 260)
-    const dir = dodgeX <= 0 ? 1 : -1
-    setDodgeX(dir * maxReach * (0.6 + Math.random() * 0.4))
+    const roomEachSide = Math.max(0, w / 2 - BTN_W / 2 - 20)
+    const maxReach = Math.min(roomEachSide, 220)
+    const dirX = dodgePos.x <= 0 ? 1 : -1
+    const newX = dirX * maxReach * (0.6 + Math.random() * 0.4)
+
+    // On mobile screens, also jump slightly up/down playfully
+    const yOffsets = [36, -32, 48, -40, 24]
+    const newY = yOffsets[dodgeCount % yOffsets.length]
+
+    setDodgePos({ x: newX, y: newY })
     setDodgeCount((c) => c + 1)
   }
 
@@ -90,7 +96,9 @@ export default function FinalQuestion({ onRestart }) {
         </button>
         <button
           className="final-no"
-          style={{ transform: `translateX(-50%) translateX(${dodgeX}px)` }}
+          style={{
+            transform: `translateX(-50%) translate3d(${dodgePos.x}px, ${dodgePos.y}px, 0)`,
+          }}
           onMouseEnter={dodge}
           onTouchStart={(e) => {
             e.preventDefault()
